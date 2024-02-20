@@ -1,38 +1,30 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { Login, Signup, Welcome } from "./screens";
+import React, { useEffect, useState } from 'react';
+import Auth_nav from './navigation/Auth_nav';
+import App_nav from './navigation/App_nav';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Component from './screens/Component';
+const App = () => {
+  // const [user, setUser] = useState(null);
+  // const auth = getAuth();
 
-const Stack = createNativeStackNavigator();
+  // useEffect(() => {
+  //   const unsubscribe = auth().onAuthStateChanged((authUser) => {
+  //     setUser(authUser);
+  //   });
 
-export default function App() {
-  
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName='Welcome'
-      >
-        <Stack.Screen
-          name="Welcome"
-          component={Welcome}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-          options={{
-            headerShown: false
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+  //   return unsubscribe;
+  // }, []);
+
+  // return (
+  //   <>
+  //     {user ? <App_nav /> : <Auth_nav />}
+  //   </>
+  // );
+
+  return(
+    <Component/>
+
   );
-}
+};
+
+export default App;
