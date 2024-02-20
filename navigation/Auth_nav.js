@@ -7,7 +7,7 @@ const Stack = createNativeStackNavigator();
 export default function Auth_nav() {
   
   return (
-    <NavigationContainer>
+    <>
       <Stack.Navigator
         initialRouteName='Welcome'
       >
@@ -33,6 +33,6 @@ export default function Auth_nav() {
           }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+    </>
   );
 }

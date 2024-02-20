@@ -1,38 +1,35 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import { Login, Signup, Welcome } from "../screens";
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons'; // Make sure to import Ionicons from '@expo/vector-icons'
+import COLORS from '../constants/colors';
+import MyRideShares from '../screens/MyRideShares';
+import Settings from '../screens/Settings';
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App_nav() {
-  
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName='Welcome'
-      >
-        <Stack.Screen
-          name="Welcome"
-          component={Welcome}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false
-          }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-          options={{
-            headerShown: false
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'MyRideShares') {
+            iconName = focused ? 'car' : 'car-outline';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'settings' : 'settings-outline';
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        showLabel: false, 
+        activeTintColor: COLORS.primary, 
+        inactiveTintColor: COLORS.secondary, 
+      }}
+    >
+      <Tab.Screen name="MyRideShares" component={MyRideShares} />
+      <Tab.Screen name="Settings" component={Settings} />
+    </Tab.Navigator>
   );
 }

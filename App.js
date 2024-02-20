@@ -3,8 +3,10 @@ import Auth_nav from './navigation/Auth_nav';
 import App_nav from './navigation/App_nav';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import MyRideShares from './screens/MyRideShares';
+import { NavigationContainer } from '@react-navigation/native';
+
 const App = () => {
-  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(1);
   // const auth = getAuth();
 
   // useEffect(() => {
@@ -15,15 +17,10 @@ const App = () => {
   //   return unsubscribe;
   // }, []);
 
-  // return (
-  //   <>
-  //     {user ? <App_nav /> : <Auth_nav />}
-  //   </>
-  // );
-
   return(
-    <MyRideShares/>
-
+    <NavigationContainer>
+       {user ? <App_nav /> : <Auth_nav />}
+    </NavigationContainer>
   );
 };
 
