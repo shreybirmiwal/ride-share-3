@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import COLORS from '../constants/colors';
+import { auth } from '../firebase';
+import ToastManager, { Toast } from 'expo-react-native-toastify';
 
 const Settings = () => {
   const [profilePicture, setProfilePicture] = useState(require('../assets/default-pfp.jpg')); // You should replace this with the actual path or URL of the default profile picture
@@ -12,10 +14,8 @@ const Settings = () => {
   };
 
   const handleSignOut = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', onPress: () => console.log('User signed out.') },
-    ]);
+    auth.signOut()
+    Toast.success("Signed out!")
   };
 
   const handleDeleteAccount = () => {
@@ -27,6 +27,7 @@ const Settings = () => {
 
   return (
     <View style={styles.container}>
+        <ToastManager/>
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={handleEditProfilePic}>
           <Image source={profilePicture} style={styles.profilePicture} />
