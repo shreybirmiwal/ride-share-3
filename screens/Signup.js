@@ -8,12 +8,6 @@ import ToastManager, { Toast } from "expo-react-native-toastify";
 import { auth } from '../firebase';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
-
-//google auth
-import { GoogleAuthProvider } from "firebase/auth";
-const provider = new GoogleAuthProvider();
-
-
 const Signup = ({ navigation }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
     const [email, setEmail] = useState('');
@@ -32,10 +26,6 @@ const Signup = ({ navigation }) => {
         setName(text);
     };
 
-    const create_google_account = async() => {
-        console.log("goo")
-        createUserwithgo
-    }
 
     const sign_up = async() => {
 
@@ -43,8 +33,8 @@ const Signup = ({ navigation }) => {
             Toast.error("Please use a valid email");
             return;
         }
-        if(!password.length >= 4){
-            Toast.error("Password must be > 4 characters");
+        if(!password.length >= 6){
+            Toast.error("Password must be at least 6 characters");
             return;
         }
         if(!name.length > 0){
@@ -190,58 +180,6 @@ const Signup = ({ navigation }) => {
                     }}
                     onPress={() => sign_up()}
                 />
-
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20 }}>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                    <Text style={{ fontSize: 14 }}>Or Sign up with</Text>
-                    <View
-                        style={{
-                            flex: 1,
-                            height: 1,
-                            backgroundColor: COLORS.grey,
-                            marginHorizontal: 10
-                        }}
-                    />
-                </View>
-
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
-                }}>
-                    <TouchableOpacity
-                        onPress={() => create_google_account()}
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: COLORS.grey,
-                            marginRight: 4,
-                            borderRadius: 10
-                        }}
-                    >
-                        <Image
-                            source={require("../assets/google.png")}
-                            style={{
-                                height: 36,
-                                width: 36,
-                                marginRight: 8
-                            }}
-                            resizeMode='contain'
-                        />
-
-                        <Text>Google</Text>
-                    </TouchableOpacity>
-                </View>
 
                 <View style={{
                     flexDirection: "row",
