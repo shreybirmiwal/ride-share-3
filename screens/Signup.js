@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Button from '../components/Button';
 import ToastManager, { Toast } from "expo-react-native-toastify";
 import { auth } from '../firebase';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile} from "firebase/auth";
 
 const Signup = ({ navigation }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
@@ -43,7 +43,11 @@ const Signup = ({ navigation }) => {
         }
 
         console.log(email + password)
-        await createUserWithEmailAndPassword(auth, email, password);
+
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        await updateProfile(user, { displayName: name });
+
         Toast.success("Account Created")
     }
 
@@ -151,22 +155,6 @@ const Signup = ({ navigation }) => {
                             onChangeText={handlePasswordChange}
                         />
 
-                        <TouchableOpacity
-                            onPress={() => setIsPasswordShown(!isPasswordShown)}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isPasswordShown == true ? (
-                                    <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Ionicons name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
-
-                        </TouchableOpacity>
                     </View>
                 </View>
 

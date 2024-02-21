@@ -1,33 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import COLORS from '../constants/colors';
-import { auth } from '../firebase';
+import { getAuth, onAuthStateChanged, updateProfile } from 'firebase/auth';
+import * as ImagePicker from 'expo-image-picker';
 import ToastManager, { Toast } from 'expo-react-native-toastify';
+import COLORS from '../constants/colors';
+import * as FirebaseStorage from 'firebase/storage';
+import { storage } from '../firebase';
 
 const Settings = () => {
-  const [profilePicture, setProfilePicture] = useState(require('../assets/default-pfp.jpg')); // You should replace this with the actual path or URL of the default profile picture
-  const [userName, setUserName] = useState('John Doe');
-  const [userEmail, setUserEmail] = useState('john.doe@example.com');
+  const [profilePicture, setProfilePicture] = useState(require('../assets/default-pfp.jpg'));
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
 
-  const handleEditProfilePic = () => {
-    Alert.alert('Edit Profile Picture', 'Feature not implemented yet.');
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setProfilePicture(user.photoURL ? { uri: user.photoURL } : require('../assets/default-pfp.jpg'));
+        setUserName(user.displayName || 'John Doe');
+        setUserEmail(user.email || 'john.doe@example.com');
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup on unmount
+  }, [auth]);
+
+  const handleEditProfilePic = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        const photoCamera = 'data:image/jpeg;base64,' + result.base64;
+
+        // Upload the image to Firebase Storage
+        
+        const storageRef = storage.ref(`pictures/${auth.currentUser.uid}`);
+        const uploadTask = storageRef.putString(photoCamera, 'data_url');
+
+        uploadTask.on('state_changed', null, (error) => {
+          console.error('Error uploading image:', error.message);
+        }, () => {
+          // Image uploaded successfully, get download URL
+          uploadTask.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
+            // Update the profile picture in Firebase Authentication
+            await updateProfile(auth.currentUser, {
+              photoURL: downloadURL,
+            });
+
+            setProfilePicture({ uri: downloadURL });
+            Toast.success('Profile picture updated successfully!');
+          });
+        });
+      }
+    } catch (error) {
+      console.error('Error selecting image:', error.message);
+    }
   };
 
-  const handleSignOut = () => {
-    auth.signOut()
-    Toast.success("Signed out!")
-  };
-
-  const handleDeleteAccount = () => {
-    Alert.alert('Delete Account', 'Are you sure you want to delete your account?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', onPress: () => console.log('User account deleted.') },
-    ]);
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut();
+      Toast.success('Signed out!');
+    } catch (error) {
+      console.error('Error signing out:', error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
-        <ToastManager/>
+      <ToastManager />
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={handleEditProfilePic}>
           <Image source={profilePicture} style={styles.profilePicture} />
@@ -36,11 +83,9 @@ const Settings = () => {
         <Text style={styles.userEmail}>{userEmail}</Text>
       </View>
 
-
-    <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+      <TouchableOpacity style={styles.button} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Sign Out</Text>
-    </TouchableOpacity>
-
+      </TouchableOpacity>
     </View>
   );
 };

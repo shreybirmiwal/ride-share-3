@@ -4,12 +4,32 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from '../constants/colors';
 import { Ionicons } from "@expo/vector-icons";
 import Button from '../components/Button';
+import { auth } from '../firebase';
+import ToastManager, { Toast } from "expo-react-native-toastify";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = ({ navigation }) => {
     const [isPasswordShown, setIsPasswordShown] = useState(true);
-    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleEmailChange = (text) => {
+        setEmail(text);
+      };
+      const handlePasswordChange = (text) => {
+          setPassword(text);
+      };
+      const signIn = async() => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password)
+        } catch (error) {
+            Toast.error("Not valid!")   
+        }
+      }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+            <ToastManager />
             <View style={{ flex: 1, marginHorizontal: 22 }}>
                 <View style={{ marginVertical: 22 }}>
                     <Text style={{
@@ -47,6 +67,8 @@ const Login = ({ navigation }) => {
                             style={{
                                 width: "100%"
                             }}
+                            value= {email}
+                            onChangeText={handleEmailChange}
                         />
                     </View>
                 </View>
@@ -75,24 +97,11 @@ const Login = ({ navigation }) => {
                             style={{
                                 width: "100%"
                             }}
+                            value={password}
+                            onChangeText={handlePasswordChange}
                         />
 
-                        <TouchableOpacity
-                            onPress={() => setIsPasswordShown(!isPasswordShown)}
-                            style={{
-                                position: "absolute",
-                                right: 12
-                            }}
-                        >
-                            {
-                                isPasswordShown == true ? (
-                                    <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                                ) : (
-                                    <Ionicons name="eye" size={24} color={COLORS.black} />
-                                )
-                            }
 
-                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -103,6 +112,7 @@ const Login = ({ navigation }) => {
                         marginTop: 18,
                         marginBottom: 4,
                     }}
+                    onPress ={() => signIn()}
                 />
 
 
