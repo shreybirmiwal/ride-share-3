@@ -6,7 +6,7 @@ import MyRideShares from './screens/MyRideShares';
 import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
-  const [user, setUser] = useState(1);
+  const [user, setUser] = useState();
   // const auth = getAuth();
 
   // useEffect(() => {
